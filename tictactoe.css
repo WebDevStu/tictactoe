@@ -2,6 +2,9 @@
     margin: 0;
     padding: 0;
 }
+body{
+    font: normal normal 1.2em/1em Arial;
+}
 .tictactoe{
     margin: 50px auto;
     width: 300px;
@@ -54,4 +57,9 @@
     width: 10px;
     height: 60px;
     transform: rotate(-45deg);
-} 
+}
+.score{
+    margin: 10px auto;
+    width: 300px;
+    text-align: center;
+}

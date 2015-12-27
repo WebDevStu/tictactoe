@@ -4,8 +4,22 @@
  */
 var TicTacToe = function () {
 
+    this.play = true;
     this.icon = false; // false = x; true . o
     this.boxes = [];
+
+    this.wins = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+
+        [6, 4, 2],
+        [0, 4, 8]
+    ];
 
     this.buildBoard();
 };
@@ -31,16 +45,17 @@ TicTacToe.prototype.getBox = function (index) {
 
 /**
  * getStatus
+ * gets the status of a box and matches the icon in play
  *
  * @returns {Boolean}
  */
 TicTacToe.prototype.getStatus = function (index) {
 
-    var box = this.getBox(index);
+    var box = this.getBox(index),
+        icon = box.className === 'cross';
 
-    return box.played;
+     return !!box.played && (icon === this.icon);
 };
-
 
 
 /**
@@ -61,7 +76,10 @@ TicTacToe.prototype.buildBoard = function () {
         item.setAttribute('data-index', i);
 
         item.addEventListener('click', function (evt) {
-            tictactoe.playSquare.call(tictactoe, evt);
+
+            if (tictactoe.play) {
+                tictactoe.playSquare.call(tictactoe, evt);
+            }
         }, false);
 
         this.boxes.push(item);
@@ -90,13 +108,14 @@ TicTacToe.prototype.playSquare = function (evt) {
 
     if (this.icon) {
         box.classList.add('cross');
+        box.cross = true;
         //this.computerTurn();
     } else {
         box.classList.add('nought');
+        box.nought = true;
     }
 
     box.played = true;
-
 
     this.checkForWin(index);
 };
@@ -105,38 +124,62 @@ TicTacToe.prototype.playSquare = function (evt) {
 /**
  * checkForWin
  *
- * @param index {Number}
+ * @param index {Number|String}
  */
 TicTacToe.prototype.checkForWin = function (index) {
 
-    var toCheck = [];
+    var accumulative;
 
     index = +index;
 
-    console.dir(index);
     // notes
     // first check either side (potentially up to x2 each way)
     // then check up and down (potentially 2 each way)
     // then diagonals both directions
 
 
-    // side to side check
-    if (index % 3 === 0) {
-        // start of row - check two after
-        toCheck.push(index + 1, index + 2);
-    } else if ((index - 1) % 3 === 0) {
-        // middle row - one either side
-        toCheck.push(index - 1, index + 1);
-    } else if ((index - 2) % 3 === 0) {
-        // end row - check two before
-        toCheck.push(index - 1, index - 2);
+    this.wins.forEach(function (wins) {
+
+        accumulative = true;
+
+        if (wins.indexOf(index) < 0) {
+            return;
+        }
+
+        wins.forEach(function (win) {
+            if (!this.getStatus(win)) {
+                accumulative = false;
+            }
+        }, this);
+
+        if (accumulative) {
+            this.gameOver();
+        }
+
+    }, this);
+
+
+    if (this.play) {
+        this.icon = !this.icon;
     }
-
-
-
-    this.icon = !this.icon;
 };
 
+
+/**
+ * gameOver
+ * stops play
+ */
+TicTacToe.prototype.gameOver = function () {
+
+    var icon = this.icon ? 'crosses' : 'noughts',
+        score = document.createElement('div');
+
+    this.play = false;
+
+    score.className = 'score';
+    score.innerHTML = 'Game over, ' + icon + ' win this time.';
+    document.body.appendChild(score);
+};
 
 
 /**
@@ -155,6 +198,9 @@ TicTacToe.prototype.computerTurn = function () {
 
     }, this);
 };
+
+
+
 
 
 
