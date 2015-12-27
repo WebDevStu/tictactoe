@@ -1,6 +1,5 @@
 /**
  * TicTacToe
- * user is always crosses computer is noughts
  *
  * @param nextGame {Function}
  * @constructor
@@ -9,11 +8,11 @@ var TicTacToe = function (nextGame) {
 
     this.nextGame = nextGame;
 
-    this.el     = document.getElementById('ticTacToe');
+    this.el = document.getElementById('ticTacToe');
 
-    this.play   = true;
-    this.icon   = false; // false = x; true = o
-    this.boxes  = [];
+    this.play = true;
+    this.icon = false; // false = x; true = o
+    this.squares = [];
     this.wins   = [
         [0, 1, 2],
         [3, 4, 5],
@@ -32,35 +31,35 @@ var TicTacToe = function (nextGame) {
 
 
 /**
- * getBox
+ * getSquare
  *
  * @param index {Number}
  * @returns {Object}
  */
-TicTacToe.prototype.getBox = function (index) {
+TicTacToe.prototype.getSquare = function (index) {
 
-    var box = this.boxes[index];
+    var square = this.squares[index];
 
-    if (box) {
-        return box;
+    if (square) {
+        return square;
     }
 
-    throw new Error('Box out of range: ' + index);
+    throw new Error('Square out of range: ' + index);
 };
 
 
 /**
  * getStatus
- * gets the status of a box and matches the icon in play
+ * gets the status of a square and matches the icon in play
  *
  * @returns {Boolean}
  */
 TicTacToe.prototype.getStatus = function (index) {
 
-    var box = this.getBox(index),
-        icon = box.className === 'cross';
+    var square = this.getSquare(index),
+        icon = square.className === 'cross';
 
-     return !!box.played && (icon === this.icon);
+     return !!square.played && (icon === this.icon);
 };
 
 
@@ -71,8 +70,8 @@ TicTacToe.prototype.getStatus = function (index) {
  */
 TicTacToe.prototype.getSquaresInPlay = function () {
 
-    return this.boxes.filter(function (box) {
-        return !box.played;
+    return this.squares.filter(function (square) {
+        return !square.played;
     }).length;
 
 };
@@ -124,7 +123,7 @@ TicTacToe.prototype.buildBoard = function () {
             }
         }, false);
 
-        this.boxes.push(item);
+        this.squares.push(item);
 
         list.appendChild(item);
     }
@@ -145,23 +144,23 @@ TicTacToe.prototype.buildBoard = function () {
 TicTacToe.prototype.playSquare = function (evt) {
 
     var index = evt.currentTarget.getAttribute('data-index'),
-        box = this.getBox(index);
+        square = this.getSquare(index);
 
-    if (box.played) {
+    if (square.played) {
         return;
     }
 
     if (this.icon) {
-        box.classList.add('cross');
-        box.cross = true;
+        square.classList.add('cross');
+        square.cross = true;
 
         //this.computerTurn();
     } else {
-        box.classList.add('nought');
-        box.nought = true;
+        square.classList.add('nought');
+        square.nought = true;
     }
 
-    box.played = true;
+    square.played = true;
 
     this.checkForWin(index);
 };
@@ -236,25 +235,6 @@ TicTacToe.prototype.gameOver = function () {
 
 
 
-
-
-
-/**
- * computerTurn
- * @TODO
- */
-TicTacToe.prototype.computerTurn = function () {
-
-    var unPlayed = this.boxes.filter(function (box) {
-        return !box.played;
-    });
-
-    unPlayed.forEach(function (el) {
-
-    // do your magic here
-
-    }, this);
-};
 
 
 
