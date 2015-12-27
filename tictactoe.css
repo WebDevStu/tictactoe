@@ -5,6 +5,11 @@
 body{
     font: normal normal 1.2em/1em Arial;
 }
+button{
+    margin: 8px 0;
+    padding: 0 14px;
+    line-height: 24px;
+}
 .tictactoe{
     margin: 50px auto;
     width: 300px;

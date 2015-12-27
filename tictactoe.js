@@ -1,14 +1,19 @@
 /**
  * TicTacToe
  * user is always crosses computer is noughts
+ *
+ * @param nextGame {Function}
+ * @constructor
  */
-var TicTacToe = function () {
+var TicTacToe = function (nextGame) {
 
-    this.play = true;
-    this.icon = false; // false = x; true . o
-    this.boxes = [];
+    this.nextGame = nextGame;
 
-    this.wins = [
+    this.el     = document.getElementById('ticTacToe');
+    this.play   = true;
+    this.icon   = false; // false = x; true = o
+    this.boxes  = [];
+    this.wins   = [
         [0, 1, 2],
         [3, 4, 5],
         [6, 7, 8],
@@ -60,6 +65,8 @@ TicTacToe.prototype.getStatus = function (index) {
 
 /**
  * buildBoard
+ *
+ * @returns TicTacToe {Object}
  */
 TicTacToe.prototype.buildBoard = function () {
 
@@ -87,7 +94,10 @@ TicTacToe.prototype.buildBoard = function () {
         list.appendChild(item);
     }
 
-    document.body.appendChild(list);
+    this.el.innerHTML = '';
+    this.el.appendChild(list);
+
+    return this;
 };
 
 
@@ -109,6 +119,7 @@ TicTacToe.prototype.playSquare = function (evt) {
     if (this.icon) {
         box.classList.add('cross');
         box.cross = true;
+
         //this.computerTurn();
     } else {
         box.classList.add('nought');
@@ -132,12 +143,7 @@ TicTacToe.prototype.checkForWin = function (index) {
 
     index = +index;
 
-    // notes
-    // first check either side (potentially up to x2 each way)
-    // then check up and down (potentially 2 each way)
-    // then diagonals both directions
-
-
+    // iterate the possibles to check for win
     this.wins.forEach(function (wins) {
 
         accumulative = true;
@@ -158,7 +164,7 @@ TicTacToe.prototype.checkForWin = function (index) {
 
     }, this);
 
-
+    // only swap to next player if game still in play
     if (this.play) {
         this.icon = !this.icon;
     }
@@ -172,14 +178,25 @@ TicTacToe.prototype.checkForWin = function (index) {
 TicTacToe.prototype.gameOver = function () {
 
     var icon = this.icon ? 'crosses' : 'noughts',
-        score = document.createElement('div');
+        score = document.createElement('div'),
+        button = document.createElement('button');
 
     this.play = false;
 
+    button.innerText = 'Play Again';
+
     score.className = 'score';
-    score.innerHTML = 'Game over, ' + icon + ' win this time.';
-    document.body.appendChild(score);
+    score.innerText = 'Game over, ' + icon + ' win this time.';
+    score.appendChild(button);
+
+    this.el.appendChild(score);
+
+    button.addEventListener('click', this.nextGame, false);
 };
+
+
+
+
 
 
 /**
@@ -201,8 +218,10 @@ TicTacToe.prototype.computerTurn = function () {
 
 
 
+// loop for continual play
+var newGame = function () {
+    return new TicTacToe(newGame);
+};
 
-
-
-// instantiate the class
-var tictactoe = new TicTacToe();
+// start the game
+newGame();
