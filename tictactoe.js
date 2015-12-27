@@ -10,6 +10,7 @@ var TicTacToe = function (nextGame) {
     this.nextGame = nextGame;
 
     this.el     = document.getElementById('ticTacToe');
+
     this.play   = true;
     this.icon   = false; // false = x; true = o
     this.boxes  = [];
@@ -60,6 +61,40 @@ TicTacToe.prototype.getStatus = function (index) {
         icon = box.className === 'cross';
 
      return !!box.played && (icon === this.icon);
+};
+
+
+/**
+ * getSquaresInPlay
+ * gets the remaining squares in play that haven't been played
+ * @returns {Number}
+ */
+TicTacToe.prototype.getSquaresInPlay = function () {
+
+    return this.boxes.filter(function (box) {
+        return !box.played;
+    }).length;
+
+};
+
+
+/**
+ * getCompleteText
+ * gets the complete text to display at the end of a game
+ *
+ * @returns {string}
+ */
+TicTacToe.prototype.getCompleteText = function () {
+
+    var icon = this.icon ? 'crosses' : 'noughts',
+        text = 'Game over, ' + icon + ' win this time. \n',
+        squaresLeft = this.getSquaresInPlay();
+
+    if (!squaresLeft) {
+        text = 'No winner this time. \n';
+    }
+
+    return text;
 };
 
 
@@ -139,7 +174,9 @@ TicTacToe.prototype.playSquare = function (evt) {
  */
 TicTacToe.prototype.checkForWin = function (index) {
 
-    var accumulative;
+    var accumulative,
+        gameOver = false,
+        squaresLeft = this.getSquaresInPlay();
 
     index = +index;
 
@@ -148,7 +185,7 @@ TicTacToe.prototype.checkForWin = function (index) {
 
         accumulative = true;
 
-        if (wins.indexOf(index) < 0) {
+        if (wins.indexOf(index) < 0 || gameOver) {
             return;
         }
 
@@ -158,10 +195,9 @@ TicTacToe.prototype.checkForWin = function (index) {
             }
         }, this);
 
-        if (accumulative) {
-            this.gameOver();
+        if (accumulative || !squaresLeft) {
+            gameOver = this.gameOver();
         }
-
     }, this);
 
     // only swap to next player if game still in play
@@ -177,8 +213,7 @@ TicTacToe.prototype.checkForWin = function (index) {
  */
 TicTacToe.prototype.gameOver = function () {
 
-    var icon = this.icon ? 'crosses' : 'noughts',
-        score = document.createElement('div'),
+    var score = document.createElement('div'),
         button = document.createElement('button');
 
     this.play = false;
@@ -186,13 +221,18 @@ TicTacToe.prototype.gameOver = function () {
     button.innerText = 'Play Again';
 
     score.className = 'score';
-    score.innerText = 'Game over, ' + icon + ' win this time.';
+    score.innerText = this.getCompleteText();
     score.appendChild(button);
 
     this.el.appendChild(score);
 
     button.addEventListener('click', this.nextGame, false);
+
+    return this;
 };
+
+
+
 
 
 
