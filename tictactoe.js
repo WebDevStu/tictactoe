@@ -11,7 +11,7 @@ var TicTacToe = function (nextGame) {
     this.el = document.getElementById('ticTacToe');
 
     this.play = true;
-    this.icon = false; // false = x; true = o
+    this.icon = true; // false = x; true = o
     this.squares = [];
     this.wins   = [
         [0, 1, 2],
@@ -139,12 +139,16 @@ TicTacToe.prototype.buildBoard = function () {
  * playSquare
  * event handler for when a square is clicked
  *
- * @param evt {Event.Object}
+ * @param evt {Event.Object} !optional
+ * @param index {Number} !optional
  */
-TicTacToe.prototype.playSquare = function (evt) {
+TicTacToe.prototype.playSquare = function (evt, index) {
 
-    var index = evt.currentTarget.getAttribute('data-index'),
-        square = this.getSquare(index);
+    var square;
+
+    index = evt ? evt.currentTarget.getAttribute('data-index') : index;
+
+    square = this.getSquare(index);
 
     if (square.played) {
         return;
@@ -153,8 +157,6 @@ TicTacToe.prototype.playSquare = function (evt) {
     if (this.icon) {
         square.classList.add('cross');
         square.cross = true;
-
-        //this.computerTurn();
     } else {
         square.classList.add('nought');
         square.nought = true;
@@ -202,6 +204,10 @@ TicTacToe.prototype.checkForWin = function (index) {
     // only swap to next player if game still in play
     if (this.play) {
         this.icon = !this.icon;
+
+        if (!this.icon) {
+            this.computerTurn();
+        }
     }
 };
 
@@ -231,10 +237,19 @@ TicTacToe.prototype.gameOver = function () {
 };
 
 
+/**
+ * computerTurn
+ * works out the computers next move and stops the user getting three in a row
+ */
+TicTacToe.prototype.computerTurn = function () {
 
+    // @TODO work out from the available wins where to place
+    // also stop them getting three in a row ;)
+    this.playSquare(null, 1);
 
-
-
+    // maybe put a small delay on the move, so as to emulate the computer is
+    // thinking about the move
+};
 
 
 
