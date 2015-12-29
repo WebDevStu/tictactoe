@@ -245,7 +245,7 @@ TicTacToe.prototype.computerTurn = function () {
 
     // @TODO work out from the available wins where to place
     // also stop them getting three in a row ;)
-    this.playSquare(null, 1);
+    //this.playSquare(null, 1);
 
     // maybe put a small delay on the move, so as to emulate the computer is
     // thinking about the move
