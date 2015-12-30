@@ -243,44 +243,46 @@ TicTacToe.prototype.gameOver = function () {
  */
 TicTacToe.prototype.computerTurn = function () {
 
-    var played = false,
-        possibles = [];
+    var play = null;
 
     // @TODO work out from the available wins where to place
     // also stop them getting three in a row ;)
     //this.playSquare(null, 1);
 
 
-    // first check if we can block the user
     this.wins.forEach(function (wins) {
 
         var userWin = 0,
-            marker = null;
+            userMarker = null,
+            computerWin = 0,
+            computerMarker = null;
 
         wins.forEach(function (win) {
 
+            // first check if we can block the user
             if (this.getSquare(win).className === 'cross') {
                 userWin += 1;
             } else {
-                marker = win;
+                userMarker = win;
             }
 
+            // check for a win on our side
+            if (this.getSquare(win).className === 'nought') {
+                computerWin += 1;
+            } else {
+                computerMarker = win;
+            }
         }, this);
 
         if (userWin === 2) {
-            this.playSquare(null, marker);
-            played = true;
+            play = userMarker;
+        } else if (computerMarker > 0) {
+            play = computerMarker;
         }
     }, this);
 
 
-    if (played) {
-        return;
-    }
-
-    // now check available finishes based on our previous
-
-
+    this.playSquare(null, play);
 
     // maybe put a small delay on the move, so as to emulate the computer is
     // thinking about the move
