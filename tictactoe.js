@@ -243,10 +243,42 @@ TicTacToe.prototype.gameOver = function () {
  */
 TicTacToe.prototype.computerTurn = function () {
 
+    var played = false,
+        possibles = [];
+
     // @TODO work out from the available wins where to place
     // also stop them getting three in a row ;)
     //this.playSquare(null, 1);
 
+
+    // first check if we can block the user
+    this.wins.forEach(function (wins) {
+
+        var userWin = 0,
+            marker = null;
+
+        wins.forEach(function (win) {
+
+            if (this.getSquare(win).className === 'cross') {
+                userWin += 1;
+            } else {
+                marker = win;
+            }
+
+        }, this);
+
+        if (userWin === 2) {
+            this.playSquare(null, marker);
+            played = true;
+        }
+    }, this);
+
+
+    if (played) {
+        return;
+    }
+
+    // now check available finishes based on our previous
 
 
 
