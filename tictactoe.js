@@ -88,6 +88,8 @@ TicTacToe.prototype.getSquaresInPlay = function (counts) {
  * getRandom
  * randomly selects an un-played square
  *
+ * @TODO this method needs to use the AI class to work out where the user will play next
+ *
  * @returns {string}
  */
 TicTacToe.prototype.getRandom = function () {
@@ -267,33 +269,69 @@ TicTacToe.prototype.gameOver = function () {
  */
 TicTacToe.prototype.computerTurn = function () {
 
-    var play = null;
+    var play = null,
+        winningSquare,
+        square,
+        marker,
+        played;
 
+    // check for wins
     this.wins.forEach(function (wins) {
 
-        var userWin = 0,
-            userMarker = null,
-            played = 0;
+        winningSquare = 0;
+        marker = null;
+        played = 0;
 
         wins.forEach(function (win) {
 
-            var square = this.getSquare(win);
+            square = this.getSquare(win);
 
             if (square.played) {
                 played += 1;
             }
 
-            if (square.className === 'cross') {
-                userWin += 1;
+            if (square.className === 'nought') {
+                winningSquare += 1;
             } else {
-                userMarker = win;
+                marker = win;
             }
         }, this);
 
-        if (userWin === 2 && played < 3) {
-            play = userMarker || null;
+        if (winningSquare === 2 && played < 3) {
+            play = marker;
         }
     }, this);
+
+    // if play not set get blocker else random
+    if (!play) {
+
+        // check for blocking moves
+        this.wins.forEach(function (wins) {
+
+            winningSquare = 0;
+            marker = null;
+            played = 0;
+
+            wins.forEach(function (win) {
+
+                square = this.getSquare(win);
+
+                if (square.played) {
+                    played += 1;
+                }
+
+                if (square.className === 'cross') {
+                    winningSquare += 1;
+                } else {
+                    marker = win;
+                }
+            }, this);
+
+            if (winningSquare === 2 && played < 3) {
+                play = marker || null;
+            }
+        }, this);
+    }
 
     play = (play === null) ? this.getRandom() : play;
 
