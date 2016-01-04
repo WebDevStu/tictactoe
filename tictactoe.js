@@ -66,14 +66,38 @@ TicTacToe.prototype.getStatus = function (index) {
 /**
  * getSquaresInPlay
  * gets the remaining squares in play that haven't been played
+ *
+ * @param counts {Boolean}
  * @returns {Number}
  */
-TicTacToe.prototype.getSquaresInPlay = function () {
+TicTacToe.prototype.getSquaresInPlay = function (counts) {
 
-    return this.squares.filter(function (square) {
+    var squares = this.squares.filter(function (square) {
         return !square.played;
-    }).length;
+    });
 
+    if (counts) {
+        return squares.length;
+    }
+
+    return squares;
+};
+
+
+/**
+ * getRandom
+ * randomly selects an un-played square
+ *
+ * @returns {string}
+ */
+TicTacToe.prototype.getRandom = function () {
+
+    var squaresLeft = this.getSquaresInPlay(),
+        rand = Math.round(Math.random() * (squaresLeft.length - 1));
+
+    if (squaresLeft[rand]) {
+        return squaresLeft[rand].getAttribute('data-index');
+    }
 };
 
 
@@ -87,7 +111,7 @@ TicTacToe.prototype.getCompleteText = function () {
 
     var icon = this.icon ? 'crosses' : 'noughts',
         text = 'Game over, ' + icon + ' win this time. \n',
-        squaresLeft = this.getSquaresInPlay();
+        squaresLeft = this.getSquaresInPlay(true);
 
     if (!squaresLeft) {
         text = 'No winner this time. \n';
@@ -177,7 +201,7 @@ TicTacToe.prototype.checkForWin = function (index) {
 
     var accumulative,
         gameOver = false,
-        squaresLeft = this.getSquaresInPlay();
+        squaresLeft = this.getSquaresInPlay(true);
 
     index = +index;
 
@@ -245,42 +269,33 @@ TicTacToe.prototype.computerTurn = function () {
 
     var play = null;
 
-    // @TODO work out from the available wins where to place
-    // also stop them getting three in a row ;)
-    //this.playSquare(null, 1);
-
-
     this.wins.forEach(function (wins) {
 
         var userWin = 0,
             userMarker = null,
-            computerWin = 0,
-            computerMarker = null;
+            played = 0;
 
         wins.forEach(function (win) {
 
-            // first check if we can block the user
-            if (this.getSquare(win).className === 'cross') {
+            var square = this.getSquare(win);
+
+            if (square.played) {
+                played += 1;
+            }
+
+            if (square.className === 'cross') {
                 userWin += 1;
             } else {
                 userMarker = win;
             }
-
-            // check for a win on our side
-            if (this.getSquare(win).className === 'nought') {
-                computerWin += 1;
-            } else {
-                computerMarker = win;
-            }
         }, this);
 
-        if (userWin === 2) {
-            play = userMarker;
-        } else if (computerMarker > 0) {
-            play = computerMarker;
+        if (userWin === 2 && played < 3) {
+            play = userMarker || null;
         }
     }, this);
 
+    play = (play === null) ? this.getRandom() : play;
 
     this.playSquare(null, play);
 

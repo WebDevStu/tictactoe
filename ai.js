@@ -41,7 +41,7 @@ var one = new AI('foo'),
     two = new AI('bar');
 
 
-console.log(one, two);
+//console.log(one, two);
 
 
 
