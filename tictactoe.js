@@ -1,11 +1,13 @@
 /**
  * TicTacToe
  *
+ * @param scores {Object}
  * @param nextGame {Function}
  * @constructor
  */
-var TicTacToe = function (nextGame) {
+var TicTacToe = function (scores, nextGame) {
 
+    this.scores = scores;
     this.nextGame = nextGame;
 
     this.el = document.getElementById('ticTacToe');
@@ -26,7 +28,8 @@ var TicTacToe = function (nextGame) {
         [0, 4, 8]
     ];
 
-    this.buildBoard();
+    this.buildBoard()
+        .setScores();
 };
 
 
@@ -116,9 +119,9 @@ TicTacToe.prototype.getCompleteText = function () {
         squaresLeft = this.getSquaresInPlay(true);
 
     if (!squaresLeft) {
+        // @TODO still possible to have used up all the squares and won
         text = 'No winner this time. \n';
     }
-
     return text;
 };
 
@@ -223,7 +226,7 @@ TicTacToe.prototype.checkForWin = function (index) {
         }, this);
 
         if (accumulative || !squaresLeft) {
-            gameOver = this.gameOver();
+            gameOver = this.gameOver(accumulative);
         }
     }, this);
 
@@ -308,8 +311,10 @@ TicTacToe.prototype.getNextPlayable = function (className) {
 /**
  * gameOver
  * stops play
+ *
+ * @param win {Boolean} is there a win on the board
  */
-TicTacToe.prototype.gameOver = function () {
+TicTacToe.prototype.gameOver = function (win) {
 
     var score = document.createElement('div'),
         button = document.createElement('button');
@@ -318,11 +323,13 @@ TicTacToe.prototype.gameOver = function () {
 
     button.innerText = 'Play Again';
 
-    score.className = 'score';
+    score.className = 'message';
     score.innerText = this.getCompleteText();
     score.appendChild(button);
 
     this.el.appendChild(score);
+
+    this.updateScores(win);
 
     button.addEventListener('click', this.nextGame, false);
 
@@ -330,10 +337,54 @@ TicTacToe.prototype.gameOver = function () {
 };
 
 
-// loop for continual play
-var newGame = function () {
-    return new TicTacToe(newGame);
+/**
+ * updateScores
+ * updates the dom with the winning score
+ *
+ * @param win {Boolean}
+ */
+TicTacToe.prototype.updateScores = function (win) {
+
+    var winner = 'ties';
+
+    if (win) {
+        winner = this.icon ? 'you' : 'computer';
+    }
+
+    this.scores[winner] += 1;
+    this.setScores();
+
+    localStorage.setItem('scores', JSON.stringify(this.scores));
 };
+
+
+/**
+ * setScores
+ */
+TicTacToe.prototype.setScores = function () {
+
+    var prop;
+
+    for (prop in this.scores) {
+        if (this.scores.hasOwnProperty(prop)) {
+            document.querySelector('.' + prop).innerHTML = this.scores[prop];
+        }
+    }
+};
+
+
+
+// loop for continual play
+var saved = localStorage.getItem('scores'),
+    defaults = {
+        you: 0,
+        ties: 0,
+        computer: 0
+    },
+    scores = saved ? JSON.parse(saved) : defaults,
+    newGame = function () {
+        return new TicTacToe(scores, newGame);
+    };
 
 // start the game
 newGame();

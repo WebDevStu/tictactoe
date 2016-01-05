@@ -3,15 +3,33 @@
     padding: 0;
 }
 body{
-    font: normal normal 1.2em/1em Arial;
+    font: normal normal 1em/1.2em Arial;
 }
 button{
     margin: 8px 0;
     padding: 0 14px;
     line-height: 24px;
 }
+/* scores */
+.scores{
+    margin: 20px auto;
+    width: 300px;
+    height: auto;
+    overflow: hidden;
+}
+.scores li{
+    float: left;
+    width: 33.33%;
+    list-style: none;
+    text-align: center;
+}
+.scores label{
+    display: block;
+    font-weight: 700;
+}
+/* board */
 .tictactoe{
-    margin: 50px auto;
+    margin: 0 auto;
     width: 300px;
     height: 300px;
     list-style: none;
@@ -63,7 +81,8 @@ button{
     height: 60px;
     transform: rotate(-45deg);
 }
-.score{
+/* game over message */
+.message{
     margin: 10px auto;
     width: 300px;
     text-align: center;
