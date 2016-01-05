@@ -239,6 +239,73 @@ TicTacToe.prototype.checkForWin = function (index) {
 
 
 /**
+ * computerTurn
+ * works out the computers next move and stops the user getting three in a row
+ */
+TicTacToe.prototype.computerTurn = function () {
+
+    var play = this.getNextPlayable('nought');
+
+    // if play not set get blocker
+    if (!play) {
+        play = this.getNextPlayable('cross');
+    }
+
+    // if play still not set - get random
+    play = (play === null) ? this.getRandom() : play;
+
+    // maybe put a small delay on the move, so as to emulate the computer is
+    // thinking about the move
+    this.playSquare(null, play);
+};
+
+
+/**
+ * getNextPlayable
+ * iterates the possible wins and returns a play square to play next
+ *
+ * @param className {String}
+ * @returns {*}
+ */
+TicTacToe.prototype.getNextPlayable = function (className) {
+
+    var squareToPlay = null,
+        winningSquare,
+        playedCount,
+        marker,
+        square;
+
+    this.wins.forEach(function (wins) {
+
+        winningSquare = 0;
+        marker = null;
+        playedCount = 0;
+
+        wins.forEach(function (win) {
+
+            square = this.getSquare(win);
+
+            if (square.played) {
+                playedCount += 1;
+            }
+
+            if (square.className === className) {
+                winningSquare += 1;
+            } else {
+                marker = win;
+            }
+        }, this);
+
+        if (winningSquare === 2 && playedCount < 3) {
+            squareToPlay = marker || null;
+        }
+    }, this);
+
+    return squareToPlay;
+};
+
+
+/**
  * gameOver
  * stops play
  */
@@ -261,86 +328,6 @@ TicTacToe.prototype.gameOver = function () {
 
     return this;
 };
-
-
-/**
- * computerTurn
- * works out the computers next move and stops the user getting three in a row
- */
-TicTacToe.prototype.computerTurn = function () {
-
-    var play = null,
-        winningSquare,
-        square,
-        marker,
-        played;
-
-    // check for wins
-    this.wins.forEach(function (wins) {
-
-        winningSquare = 0;
-        marker = null;
-        played = 0;
-
-        wins.forEach(function (win) {
-
-            square = this.getSquare(win);
-
-            if (square.played) {
-                played += 1;
-            }
-
-            if (square.className === 'nought') {
-                winningSquare += 1;
-            } else {
-                marker = win;
-            }
-        }, this);
-
-        if (winningSquare === 2 && played < 3) {
-            play = marker;
-        }
-    }, this);
-
-    // if play not set get blocker else random
-    if (!play) {
-
-        // check for blocking moves
-        this.wins.forEach(function (wins) {
-
-            winningSquare = 0;
-            marker = null;
-            played = 0;
-
-            wins.forEach(function (win) {
-
-                square = this.getSquare(win);
-
-                if (square.played) {
-                    played += 1;
-                }
-
-                if (square.className === 'cross') {
-                    winningSquare += 1;
-                } else {
-                    marker = win;
-                }
-            }, this);
-
-            if (winningSquare === 2 && played < 3) {
-                play = marker || null;
-            }
-        }, this);
-    }
-
-    play = (play === null) ? this.getRandom() : play;
-
-    this.playSquare(null, play);
-
-    // maybe put a small delay on the move, so as to emulate the computer is
-    // thinking about the move
-};
-
 
 
 // loop for continual play
