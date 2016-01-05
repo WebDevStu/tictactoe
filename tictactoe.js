@@ -117,17 +117,15 @@ TicTacToe.prototype.getRandom = function () {
  *
  * @returns {string}
  */
-TicTacToe.prototype.getCompleteText = function () {
+TicTacToe.prototype.getCompleteText = function (win) {
 
-    var symbol = this.symbol ? 'crosses' : 'noughts',
-        text = 'Game over, ' + symbol + ' win this time. \n',
-        squaresLeft = this.getSquaresInPlay(true);
+    var symbol = this.symbol ? 'crosses' : 'noughts';
 
-    if (!squaresLeft) {
-        // @TODO still possible to have used up all the squares and won
-        text = 'No winner this time. \n';
+    if (!win) {
+        return 'No winner this time. \n';
     }
-    return text;
+
+    return 'Game over, ' + symbol + ' win this time. \n';
 };
 
 
@@ -211,7 +209,7 @@ TicTacToe.prototype.playSquare = function (evt, index) {
  */
 TicTacToe.prototype.checkForWin = function (index) {
 
-    var accumulative,
+    var winningLine,
         gameOver = false,
         squaresLeft = this.getSquaresInPlay(true);
 
@@ -220,7 +218,7 @@ TicTacToe.prototype.checkForWin = function (index) {
     // iterate the possibles to check for win
     this.wins.forEach(function (wins) {
 
-        accumulative = true;
+        winningLine = true;
 
         if (wins.indexOf(index) < 0 || gameOver) {
             return;
@@ -228,12 +226,12 @@ TicTacToe.prototype.checkForWin = function (index) {
 
         wins.forEach(function (win) {
             if (!this.getStatus(win)) {
-                accumulative = false;
+                winningLine = false;
             }
         }, this);
 
-        if (accumulative || !squaresLeft) {
-            gameOver = this.gameOver(accumulative);
+        if (winningLine || !squaresLeft) {
+            gameOver = this.gameOver(winningLine);
         }
     }, this);
 
@@ -332,7 +330,7 @@ TicTacToe.prototype.gameOver = function (win) {
     button.addEventListener('click', this.nextGame, false);
 
     score.className = 'message';
-    score.innerText = this.getCompleteText();
+    score.innerText = this.getCompleteText(win);
     score.appendChild(button);
 
     this.el.appendChild(score);
