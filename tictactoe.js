@@ -4,10 +4,11 @@
  *
  * @param scores {Object} persisted scores state, pulled from storage or defaults
  * @param nextGame {Function} callback method to start a new game
+ * @param isComputersTurn {Boolean}
  *
  * @constructor
  */
-var TicTacToe = function (scores, nextGame) {
+var TicTacToe = function (scores, nextGame, isComputersTurn) {
 
     this.scores = scores;
     this.nextGame = nextGame;
@@ -15,7 +16,7 @@ var TicTacToe = function (scores, nextGame) {
     this.el = document.getElementById('ticTacToe');
 
     this.gameInPlay = true;
-    this.symbol = true; // false = x; true = o
+    this.symbol = true; // false = `x`; true = `o`
     this.squares = [];
     this.wins   = [
         [0, 1, 2],
@@ -32,6 +33,11 @@ var TicTacToe = function (scores, nextGame) {
 
     this.buildBoard()
         .setScores();
+
+    if (isComputersTurn) {
+        this.symbol = false;
+        this.computerTurn();
+    }
 };
 
 
@@ -379,6 +385,8 @@ TicTacToe.prototype.setScores = function () {
 };
 
 
+
+
 // instantiate the class and start the game
 var saved = localStorage.getItem('scores'),
     defaults = {
@@ -387,10 +395,14 @@ var saved = localStorage.getItem('scores'),
         computer: 0
     },
     scores = saved ? JSON.parse(saved) : defaults,
+    isComputersTurn = true,
 
     // loop for continual play
     newGame = function () {
-        return new TicTacToe(scores, newGame);
+
+        isComputersTurn = !isComputersTurn;
+
+        return new TicTacToe(scores, newGame, isComputersTurn);
     };
 
 // start the game loop
