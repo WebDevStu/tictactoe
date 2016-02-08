@@ -19,14 +19,15 @@ var TicTacToe = function (scores, nextGame, isComputersTurn) {
     this.symbol = true; // false = `x`; true = `o`
     this.squares = [];
     this.wins   = [
+        // horizontal
         [0, 1, 2],
         [3, 4, 5],
         [6, 7, 8],
-
+        // vertical
         [0, 3, 6],
         [1, 4, 7],
         [2, 5, 8],
-
+        // diagonal
         [6, 4, 2],
         [0, 4, 8]
     ];
@@ -34,6 +35,7 @@ var TicTacToe = function (scores, nextGame, isComputersTurn) {
     this.buildBoard()
         .setScores();
 
+    // swap for computer turn
     if (isComputersTurn) {
         this.symbol = false;
         this.computerTurn();
@@ -190,19 +192,18 @@ TicTacToe.prototype.playSquare = function (evt, index) {
 
     square = this.getSquare(index);
 
-    if (square.played) {
-        return;
-    }
+    if (!square.played) {
 
-    if (this.symbol) {
-        square.classList.add('cross');
-        square.cross = true;
-    } else {
-        square.classList.add('nought');
-        square.nought = true;
-    }
+        if (this.symbol) {
+            square.classList.add('cross');
+            square.cross = true;
+        } else {
+            square.classList.add('nought');
+            square.nought = true;
+        }
 
-    square.played = true;
+        square.played = true;
+    }
 
     this.checkForWin(index);
 };
@@ -226,7 +227,7 @@ TicTacToe.prototype.checkForWin = function (index) {
 
         winningLine = true;
 
-        if (wins.indexOf(index) < 0 || gameOver) {
+        if (wins.indexOf(index) < 0) {
             return;
         }
 
