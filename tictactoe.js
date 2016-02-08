@@ -149,7 +149,13 @@ TicTacToe.prototype.buildBoard = function () {
     var tictactoe = this,
         list = document.createElement('ul'),
         item,
-        i;
+        i,
+        eventHandler = function (evt) {
+
+            if (tictactoe.gameInPlay) {
+                tictactoe.playSquare.call(tictactoe, evt);
+            }
+        };
 
     list.className = 'tictactoe';
 
@@ -157,13 +163,7 @@ TicTacToe.prototype.buildBoard = function () {
 
         item = document.createElement('li');
         item.setAttribute('data-index', i);
-
-        item.addEventListener('click', function (evt) {
-
-            if (tictactoe.gameInPlay) {
-                tictactoe.playSquare.call(tictactoe, evt);
-            }
-        }, false);
+        item.addEventListener('click', eventHandler, false);
 
         this.squares.push(item);
 
