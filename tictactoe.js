@@ -13,6 +13,9 @@ var TicTacToe = function (scores, nextGame, isComputersTurn) {
     this.scores = scores;
     this.nextGame = nextGame;
 
+    // this.ai = ai;
+    // this.ai.findEveryWin();
+
     this.el = document.getElementById('ticTacToe');
 
     this.gameInPlay = true;
@@ -157,6 +160,7 @@ TicTacToe.prototype.buildBoard = function () {
             }
         };
 
+    this.scoreEl = document.createElement('div');
     list.className = 'tictactoe';
 
     for (i = 0; i < 9; i += 1) {
@@ -172,6 +176,7 @@ TicTacToe.prototype.buildBoard = function () {
 
     this.el.innerHTML = '';
     this.el.appendChild(list);
+    this.el.appendChild(this.scoreEl);
 
     return this;
 };
@@ -340,7 +345,8 @@ TicTacToe.prototype.gameOver = function (win) {
     score.innerText = this.getCompleteText(win);
     score.appendChild(button);
 
-    this.el.appendChild(score);
+    this.scoreEl.innerHTML = '';
+    this.scoreEl.appendChild(score);
 
     this.updateScores(win);
     this.gameInPlay = false;
